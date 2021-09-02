@@ -26,4 +26,43 @@ class GameTest {
             game.placeMark(new Coordinate(2, 3), player);
         }).isInstanceOf(CouldNotPlaceMark.class);
     }
+
+    @Test()
+    public void gameEndsWhenARowIsFullWithASinglePlayersMark() {
+        Game game = new Game();
+        Player firstPlayer = new Player("X");
+        Player secondPlayer = new Player("Y");
+
+        game.placeMark(new Coordinate(1,1), firstPlayer);
+        game.placeMark(new Coordinate(2,2), secondPlayer);
+        game.placeMark(new Coordinate(1,2), firstPlayer);
+        game.placeMark(new Coordinate(2,3), secondPlayer);
+        game.placeMark(new Coordinate(1,3), firstPlayer);
+
+
+        assertThat(game.winner().isPresent()).isTrue();
+        assertThat(game.winner().get().mark()).isEqualTo(firstPlayer.mark());
+    }
+
+    @Test()
+    public void cannotPlaceAnotherMarkWhenTheGameEnded() {
+        Game game = new Game();
+        Player firstPlayer = new Player("X");
+        Player secondPlayer = new Player("Y");
+
+        // game that is in a state where the first player would have won
+        game.placeMark(new Coordinate(1,1), firstPlayer);
+        game.placeMark(new Coordinate(2,2), secondPlayer);
+        game.placeMark(new Coordinate(1,2), firstPlayer);
+        game.placeMark(new Coordinate(2,3), secondPlayer);
+        game.placeMark(new Coordinate(1,3), firstPlayer);
+
+        // now try to make another move as the second player
+        assertThatThrownBy(() -> {
+            game.placeMark(new Coordinate(2,2), secondPlayer);
+        }).isInstanceOf(CouldNotPlaceMark.class);
+
+        assertThat(game.winner().isPresent()).isTrue();
+        assertThat(game.winner().get().mark()).isEqualTo(firstPlayer.mark());
+    }
 }
