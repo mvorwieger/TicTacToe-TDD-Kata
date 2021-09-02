@@ -7,15 +7,11 @@ public class Game {
             {null, null, null}
     };
 
-    public void placeMark(int x, int y, String mark) {
-        grid[x - 1][y - 1] = mark;
+    public void placeMark(Coordinate coord, Player player) {
+        grid[coord.x() - 1][coord.y() - 1] = player.mark();
     }
 
-    public Space getSpace(int i, int i1) {
-        return null;
-    }
-
-    public boolean spaceIsMarkedBy(int xCord, int yCord, String mark) {
-        return mark.equals(grid[xCord - 1][yCord - 1]);
+    public boolean spaceIsMarkedBy(Coordinate coord, Player player) {
+        return player.mark().equals(grid[coord.x() - 1][coord.y() - 1]);
     }
 }
