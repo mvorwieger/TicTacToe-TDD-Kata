@@ -28,16 +28,47 @@ class GameTest {
     }
 
     @Test()
-    public void gameEndsWhenARowIsFullWithASinglePlayersMark() {
+    public void gameEndsWhenAVerticalRowIsFullOfOnePlayersMarks() {
         Game game = new Game();
         Player firstPlayer = new Player("X");
         Player secondPlayer = new Player("Y");
 
+        /**
+         * Grid:
+         * x o .
+         * x o .
+         * x . .
+         * ^
+         * 3 Marks Match
+         */
         game.placeMark(new Coordinate(1,1), firstPlayer);
         game.placeMark(new Coordinate(2,2), secondPlayer);
         game.placeMark(new Coordinate(1,2), firstPlayer);
         game.placeMark(new Coordinate(2,3), secondPlayer);
         game.placeMark(new Coordinate(1,3), firstPlayer);
+
+
+        assertThat(game.winner().isPresent()).isTrue();
+        assertThat(game.winner().get().mark()).isEqualTo(firstPlayer.mark());
+    }
+
+    @Test()
+    public void gameEndsWhenAHorizontalRowIsFullOfOnePlayersMarks() {
+        Game game = new Game();
+        Player firstPlayer = new Player("X");
+        Player secondPlayer = new Player("Y");
+
+        /**
+         * Grid:
+         * . o .
+         * . o .
+         * x x x <-- 3 Marks Match
+         */
+        game.placeMark(new Coordinate(1,1), firstPlayer);
+        game.placeMark(new Coordinate(2,2), secondPlayer);
+        game.placeMark(new Coordinate(2,1), firstPlayer);
+        game.placeMark(new Coordinate(2,3), secondPlayer);
+        game.placeMark(new Coordinate(3,1), firstPlayer);
 
 
         assertThat(game.winner().isPresent()).isTrue();

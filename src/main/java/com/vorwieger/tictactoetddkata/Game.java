@@ -1,5 +1,6 @@
 package com.vorwieger.tictactoetddkata;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -29,16 +30,32 @@ public class Game {
     }
 
     private void checkForWinner() {
-        if(lastPlayerHasThreeMatchingSpacesInARow()) {
+        if(playerHasMatchesInAVerticalRow(lastPlayer) || playerHasMatchesInAHorizontalRow(lastPlayer)) {
             winner = lastPlayer;
             gameIsFinished = true;
         }
     }
 
-    private boolean lastPlayerHasThreeMatchingSpacesInARow() {
+    private boolean playerHasMatchesInAHorizontalRow(Player player) {
+        for (int x = 0; x < grid.length; x++) {
+            var columnList = new ArrayList<String>();
+
+            for (int y = 0; y < grid.length; y++) {
+                columnList.add(grid[y][x]);
+            }
+
+            if(columnList.stream().allMatch((mark) -> player.mark().equals(mark))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean playerHasMatchesInAVerticalRow(Player player) {
         return Arrays.stream(grid).anyMatch(
                 (row) -> Arrays.stream(row).allMatch(
-                        (cell) -> lastPlayer.mark().equals(cell)
+                        (cell) -> player.mark().equals(cell)
                 )
         );
     }
