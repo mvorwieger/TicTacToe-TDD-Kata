@@ -10,6 +10,7 @@ public class Game {
             {null, null, null},
             {null, null, null}
     };
+
     private Player lastPlayer = null;
     private Player winner;
     private boolean gameIsFinished = false;
@@ -19,7 +20,7 @@ public class Game {
             throw CouldNotPlaceMark.becauseYouHaveAlreadyTakenYourTurn(player);
         }
 
-        if(gameIsFinished) {
+        if (gameIsFinished) {
             throw CouldNotPlaceMark.becauseTheGameIsAlreadyFinished(player);
         }
 
@@ -30,21 +31,55 @@ public class Game {
     }
 
     private void checkForWinner() {
-        if(playerHasMatchesInAVerticalRow(lastPlayer) || playerHasMatchesInAHorizontalRow(lastPlayer)) {
+        if (playerHasMatchesInAVerticalRow(lastPlayer)
+                || playerHasMatchesInAHorizontalRow(lastPlayer)
+                || playerHasMatchesInADiagonalRow(lastPlayer)) {
             winner = lastPlayer;
             gameIsFinished = true;
         }
+    }
+
+    private boolean playerHasMatchesInADiagonalRow(Player player) {
+        return checkDiagonalLeftToRight(player) ||
+                checkDiagonalRightToLeft(player);
+    }
+
+    private boolean checkDiagonalLeftToRight(Player player) {
+        ArrayList<String> diagonalRowLeft = new ArrayList<>();
+        for (int i = 0; i < grid.length; i++) {
+            diagonalRowLeft.add(
+                    grid[i][i]
+            );
+        }
+
+        return diagonalRowLeft.stream().allMatch((mark) -> player.mark().equals(mark));
+    }
+
+    private boolean checkDiagonalRightToLeft(Player player) {
+        ArrayList<String> diagonalRowRight = new ArrayList<>();
+        for (int y = 0; y < grid.length; y++) {
+            var x = (grid.length - 1) - y;
+            // x y i
+            // 2 0 0
+            // 1 1 1
+            // 0 2 2
+            diagonalRowRight.add(
+                    grid[x][y]
+            );
+        }
+
+        return diagonalRowRight.stream().allMatch(mark -> player.mark().equals(mark));
     }
 
     private boolean playerHasMatchesInAHorizontalRow(Player player) {
         for (int x = 0; x < grid.length; x++) {
             var columnList = new ArrayList<String>();
 
-            for (int y = 0; y < grid.length; y++) {
-                columnList.add(grid[y][x]);
+            for (String[] strings : grid) {
+                columnList.add(strings[x]);
             }
 
-            if(columnList.stream().allMatch((mark) -> player.mark().equals(mark))) {
+            if (columnList.stream().allMatch((mark) -> player.mark().equals(mark))) {
                 return true;
             }
         }

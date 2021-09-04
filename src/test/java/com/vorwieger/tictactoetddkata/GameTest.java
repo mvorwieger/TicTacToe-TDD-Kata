@@ -76,6 +76,29 @@ class GameTest {
     }
 
     @Test()
+    public void gameEndsWhenADiagonalRowIsFullOfOnePlayersMarks() {
+        Game game = new Game();
+        Player firstPlayer = new Player("X");
+        Player secondPlayer = new Player("Y");
+
+        /**
+         * Grid:
+         * x o .
+         * . x .
+         * . o x <-- 3 Marks Match
+         */
+        game.placeMark(new Coordinate(1,3), firstPlayer);
+        game.placeMark(new Coordinate(2,3), secondPlayer);
+        game.placeMark(new Coordinate(2,2), firstPlayer);
+        game.placeMark(new Coordinate(2,1), secondPlayer);
+        game.placeMark(new Coordinate(3,1), firstPlayer);
+
+
+        assertThat(game.winner().isPresent()).isTrue();
+        assertThat(game.winner().get().mark()).isEqualTo(firstPlayer.mark());
+    }
+
+    @Test()
     public void cannotPlaceAnotherMarkWhenTheGameEnded() {
         Game game = new Game();
         Player firstPlayer = new Player("X");
