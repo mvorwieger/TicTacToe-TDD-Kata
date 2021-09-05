@@ -2,9 +2,11 @@ package com.vorwieger.tictactoetddkata;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class Game {
+    private final GameId id;
     String[][] grid = {
             {null, null, null},
             {null, null, null},
@@ -14,6 +16,12 @@ public class Game {
     private Player lastPlayer = null;
     private Player winner;
     private boolean gameIsFinished = false;
+    private final List<PlayerId> playerIds;
+
+    public Game(GameId id, List<PlayerId> playerIds) {
+        this.id = id;
+        this.playerIds = playerIds;
+    }
 
     public void placeMark(Coordinate coord, Player player) {
         if (playedTheLastTurn(player)) {
@@ -105,5 +113,13 @@ public class Game {
 
     public Optional<Player> winner() {
         return Optional.ofNullable(winner);
+    }
+
+    public GameId id() {
+        return id;
+    }
+
+    public List<PlayerId> playerIds() {
+        return this.playerIds;
     }
 }
