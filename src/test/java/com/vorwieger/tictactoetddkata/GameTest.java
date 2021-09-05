@@ -14,8 +14,8 @@ class GameTest {
         Player playerO = PlayerFactory.createPlayerWithMark("O");
         Game game = new Game(createRandomGameId(), List.of(playerX.id(), playerO.id()));
 
-        game.placeMark(new Coordinate(1, 2), playerX);
-        game.placeMark(new Coordinate(2, 3), playerO);
+        game.placeMark(new Coordinate(1, 2), playerX.id());
+        game.placeMark(new Coordinate(2, 3), playerO.id());
         assertThat(game.spaceIsMarkedBy(new Coordinate(1, 2), playerX)).isTrue();
         assertThat(game.spaceIsMarkedBy(new Coordinate(2, 3), playerO)).isTrue();
         assertThat(game.spaceIsMarkedBy(new Coordinate(1, 2), playerO)).isFalse();
@@ -31,8 +31,8 @@ class GameTest {
         Game game = new Game(createRandomGameId(), List.of(player.id()));
 
         assertThatThrownBy(() -> {
-            game.placeMark(new Coordinate(1, 2), player);
-            game.placeMark(new Coordinate(2, 3), player);
+            game.placeMark(new Coordinate(1, 2), player.id());
+            game.placeMark(new Coordinate(2, 3), player.id());
         }).isInstanceOf(CouldNotPlaceMark.class);
     }
 
@@ -50,15 +50,15 @@ class GameTest {
          * ^
          * 3 Marks Match
          */
-        game.placeMark(new Coordinate(1,1), firstPlayer);
-        game.placeMark(new Coordinate(2,2), secondPlayer);
-        game.placeMark(new Coordinate(1,2), firstPlayer);
-        game.placeMark(new Coordinate(2,3), secondPlayer);
-        game.placeMark(new Coordinate(1,3), firstPlayer);
+        game.placeMark(new Coordinate(1,1), firstPlayer.id());
+        game.placeMark(new Coordinate(2,2), secondPlayer.id());
+        game.placeMark(new Coordinate(1,2), firstPlayer.id());
+        game.placeMark(new Coordinate(2,3), secondPlayer.id());
+        game.placeMark(new Coordinate(1,3), firstPlayer.id());
 
 
         assertThat(game.winner().isPresent()).isTrue();
-        assertThat(game.winner().get().mark()).isEqualTo(firstPlayer.mark());
+        assertThat(game.winner().get()).isEqualTo(firstPlayer.id());
     }
 
     @Test()
@@ -73,15 +73,15 @@ class GameTest {
          * . o .
          * x x x <-- 3 Marks Match
          */
-        game.placeMark(new Coordinate(1,1), firstPlayer);
-        game.placeMark(new Coordinate(2,2), secondPlayer);
-        game.placeMark(new Coordinate(2,1), firstPlayer);
-        game.placeMark(new Coordinate(2,3), secondPlayer);
-        game.placeMark(new Coordinate(3,1), firstPlayer);
+        game.placeMark(new Coordinate(1,1), firstPlayer.id());
+        game.placeMark(new Coordinate(2,2), secondPlayer.id());
+        game.placeMark(new Coordinate(2,1), firstPlayer.id());
+        game.placeMark(new Coordinate(2,3), secondPlayer.id());
+        game.placeMark(new Coordinate(3,1), firstPlayer.id());
 
 
         assertThat(game.winner().isPresent()).isTrue();
-        assertThat(game.winner().get().mark()).isEqualTo(firstPlayer.mark());
+        assertThat(game.winner().get()).isEqualTo(firstPlayer.id());
     }
 
     @Test()
@@ -96,15 +96,15 @@ class GameTest {
          * . x .
          * . o x <-- 3 Marks Match
          */
-        game.placeMark(new Coordinate(1,3), firstPlayer);
-        game.placeMark(new Coordinate(2,3), secondPlayer);
-        game.placeMark(new Coordinate(2,2), firstPlayer);
-        game.placeMark(new Coordinate(2,1), secondPlayer);
-        game.placeMark(new Coordinate(3,1), firstPlayer);
+        game.placeMark(new Coordinate(1,3), firstPlayer.id());
+        game.placeMark(new Coordinate(2,3), secondPlayer.id());
+        game.placeMark(new Coordinate(2,2), firstPlayer.id());
+        game.placeMark(new Coordinate(2,1), secondPlayer.id());
+        game.placeMark(new Coordinate(3,1), firstPlayer.id());
 
 
         assertThat(game.winner().isPresent()).isTrue();
-        assertThat(game.winner().get().mark()).isEqualTo(firstPlayer.mark());
+        assertThat(game.winner().get()).isEqualTo(firstPlayer.id());
     }
 
     @Test()
@@ -114,18 +114,18 @@ class GameTest {
         Game game = new Game(createRandomGameId(), List.of(firstPlayer.id(), secondPlayer.id()));
 
         // game that is in a state where the first player would have won
-        game.placeMark(new Coordinate(1,1), firstPlayer);
-        game.placeMark(new Coordinate(2,2), secondPlayer);
-        game.placeMark(new Coordinate(1,2), firstPlayer);
-        game.placeMark(new Coordinate(2,3), secondPlayer);
-        game.placeMark(new Coordinate(1,3), firstPlayer);
+        game.placeMark(new Coordinate(1,1), firstPlayer.id());
+        game.placeMark(new Coordinate(2,2), secondPlayer.id());
+        game.placeMark(new Coordinate(1,2), firstPlayer.id());
+        game.placeMark(new Coordinate(2,3), secondPlayer.id());
+        game.placeMark(new Coordinate(1,3), firstPlayer.id());
 
         // now try to make another move as the second player
         assertThatThrownBy(() -> {
-            game.placeMark(new Coordinate(2,2), secondPlayer);
+            game.placeMark(new Coordinate(2,2), secondPlayer.id());
         }).isInstanceOf(CouldNotPlaceMark.class);
 
         assertThat(game.winner().isPresent()).isTrue();
-        assertThat(game.winner().get().mark()).isEqualTo(firstPlayer.mark());
+        assertThat(game.winner().get()).isEqualTo(firstPlayer.id());
     }
 }

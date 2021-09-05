@@ -7,14 +7,14 @@ import java.util.Optional;
 
 public class Game {
     private final GameId id;
-    String[][] grid = {
+    private final PlayerId[][] grid = {
             {null, null, null},
             {null, null, null},
             {null, null, null}
     };
 
-    private Player lastPlayer = null;
-    private Player winner;
+    private PlayerId lastPlayer = null;
+    private PlayerId winner;
     private boolean gameIsFinished = false;
     private final List<PlayerId> playerIds;
 
@@ -23,18 +23,18 @@ public class Game {
         this.playerIds = playerIds;
     }
 
-    public void placeMark(Coordinate coord, Player player) {
-        if (playedTheLastTurn(player)) {
-            throw CouldNotPlaceMark.becauseYouHaveAlreadyTakenYourTurn(player);
+    public void placeMark(Coordinate coord, PlayerId playerId) {
+        if (playedTheLastTurn(playerId)) {
+            throw CouldNotPlaceMark.becauseYouHaveAlreadyTakenYourTurn(playerId);
         }
 
         if (gameIsFinished) {
-            throw CouldNotPlaceMark.becauseTheGameIsAlreadyFinished(player);
+            throw CouldNotPlaceMark.becauseTheGameIsAlreadyFinished(playerId);
         }
 
-        this.lastPlayer = player;
+        this.lastPlayer = playerId;
 
-        grid[coord.x() - 1][coord.y() - 1] = player.mark();
+        grid[coord.x() - 1][coord.y() - 1] = playerId;
         checkForWinner();
     }
 
@@ -47,24 +47,24 @@ public class Game {
         }
     }
 
-    private boolean playerHasMatchesInADiagonalRow(Player player) {
-        return checkDiagonalLeftToRight(player) ||
-                checkDiagonalRightToLeft(player);
+    private boolean playerHasMatchesInADiagonalRow(PlayerId playerId) {
+        return checkDiagonalLeftToRight(playerId) ||
+                checkDiagonalRightToLeft(playerId);
     }
 
-    private boolean checkDiagonalLeftToRight(Player player) {
-        ArrayList<String> diagonalRowLeft = new ArrayList<>();
+    private boolean checkDiagonalLeftToRight(PlayerId player) {
+        ArrayList<PlayerId> diagonalRowLeft = new ArrayList<>();
         for (int i = 0; i < grid.length; i++) {
             diagonalRowLeft.add(
                     grid[i][i]
             );
         }
 
-        return diagonalRowLeft.stream().allMatch((mark) -> player.mark().equals(mark));
+        return diagonalRowLeft.stream().allMatch(player::equals);
     }
 
-    private boolean checkDiagonalRightToLeft(Player player) {
-        ArrayList<String> diagonalRowRight = new ArrayList<>();
+    private boolean checkDiagonalRightToLeft(PlayerId playerId) {
+        ArrayList<PlayerId> diagonalRowRight = new ArrayList<>();
         for (int y = 0; y < grid.length; y++) {
             var x = (grid.length - 1) - y;
             // x y i
@@ -76,18 +76,18 @@ public class Game {
             );
         }
 
-        return diagonalRowRight.stream().allMatch(mark -> player.mark().equals(mark));
+        return diagonalRowRight.stream().allMatch(playerId::equals);
     }
 
-    private boolean playerHasMatchesInAHorizontalRow(Player player) {
+    private boolean playerHasMatchesInAHorizontalRow(PlayerId playerId) {
         for (int x = 0; x < grid.length; x++) {
-            var columnList = new ArrayList<String>();
+            ArrayList<PlayerId> columnList = new ArrayList<>();
 
-            for (String[] strings : grid) {
-                columnList.add(strings[x]);
+            for (PlayerId[] ids : grid) {
+                columnList.add(ids[x]);
             }
 
-            if (columnList.stream().allMatch((mark) -> player.mark().equals(mark))) {
+            if (columnList.stream().allMatch(playerId::equals)) {
                 return true;
             }
         }
@@ -95,23 +95,23 @@ public class Game {
         return false;
     }
 
-    private boolean playerHasMatchesInAVerticalRow(Player player) {
+    private boolean playerHasMatchesInAVerticalRow(PlayerId playerId) {
         return Arrays.stream(grid).anyMatch(
                 (row) -> Arrays.stream(row).allMatch(
-                        (cell) -> player.mark().equals(cell)
+                        playerId::equals
                 )
         );
     }
 
-    private boolean playedTheLastTurn(Player player) {
-        return this.lastPlayer != null && this.lastPlayer.mark().equals(player.mark());
+    private boolean playedTheLastTurn(PlayerId player) {
+        return this.lastPlayer != null && this.lastPlayer.id().equals(player.id());
     }
 
     public boolean spaceIsMarkedBy(Coordinate coord, Player player) {
-        return player.mark().equals(grid[coord.x() - 1][coord.y() - 1]);
+        return player.id().equals(grid[coord.x() - 1][coord.y() - 1]);
     }
 
-    public Optional<Player> winner() {
+    public Optional<PlayerId> winner() {
         return Optional.ofNullable(winner);
     }
 
@@ -121,5 +121,9 @@ public class Game {
 
     public List<PlayerId> playerIds() {
         return this.playerIds;
+    }
+
+    public GridView viewGrid() {
+        return GridView.fromGrid(grid);
     }
 }

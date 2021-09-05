@@ -1,12 +1,19 @@
 package com.vorwieger.tictactoetddkata;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class MatchmakingTest {
+    private Matchmaking matchmaking;
+
+    @BeforeEach
+    public void setUp() {
+        this.matchmaking = new Matchmaking(new InMemoryActiveGames());
+    }
+
     @Test
     public void canCreateAGame() {
-        Matchmaking matchmaking = new Matchmaking();
         PlayerId playerOne = PlayerFactory.createRandomPlayerId();
         PlayerId playerTwo = PlayerFactory.createRandomPlayerId();
         GameId id = matchmaking.createGame(playerOne, playerTwo);
@@ -18,7 +25,6 @@ class MatchmakingTest {
 
     @Test
     public void thereCanBeMultipleGamesAtOnce() {
-        Matchmaking matchmaking = new Matchmaking();
         PlayerId playerOne = PlayerFactory.createRandomPlayerId();
         PlayerId playerTwo = PlayerFactory.createRandomPlayerId();
 
